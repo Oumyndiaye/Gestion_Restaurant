@@ -1,0 +1,6 @@
+{% extends "base.html.twig" %}
+    {% block body %}
+        <h1>{{ subject }}</h1>
+        <p>Bonjour {{user.nom()}}, Creation de compte avec succes ,veuillez cliquez <a href="{{url('api_users_EmailValidation_collection',{'token':token})}}">ici</a> sur ce lien</p>
+    {% endblock %}
+    

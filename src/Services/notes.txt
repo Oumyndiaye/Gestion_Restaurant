@@ -1,0 +1,1 @@
+symfony console debug:autowiring:pour lister l'ensemble des dependances injectés
