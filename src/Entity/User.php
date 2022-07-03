@@ -5,10 +5,10 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\ControllerPersonnaliséController;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\ControllerPersonnaliséController;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,21 +16,25 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name:'`User`')]
 #[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name:"type",type:"string")]
 #[ORM\DiscriminatorMap(["GESTIONNAIRE"=>Gestionnaire::class,"CLIENT"=>Client::class,"LIVREUR"=>Livreur::class])] 
 #[ApiResource(
-    collectionOperations:[
-        "post","get",
-        "EmailValidation"=>[
-            "method"=>"patch",
-            "deserialize"=>false,
-            "path"=>"/users/validate/{token}",
-            "controller"=>ControllerPersonnaliséController::class
-        ]
-    ]
-)]
+    itemOperations:
+        [
+            "put"
+        ],
+    collectionOperations:
+        [
+            "post","get",
+            "EmailValidation"=>[
+                "method"=>"patch",
+                "deserialize"=>false,
+                "path"=>"/users/validate/{token}",
+                "controller"=>ControllerPersonnaliséController::class
+            ]
+        ])
+]
 class User implements UserInterface,PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -40,26 +44,27 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(["Client:read","Client:write"])]
+    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     protected $email;
 
-    #[Groups(["Client:write","Client:read"])]
+   
     #[ORM\Column(type: 'json')]
     protected $roles = [];
 
-
+    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     #[ORM\Column(type: 'string', length: 255)]
     protected $password;
     
     #[ORM\Column(type: 'string',length: 255)]
-    #[Groups(["Client:read","Client:write"])]
+    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     protected $nom;
 
-    #[Groups(["Client:read","Client:write"])]
+    
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     protected $prenom;
 
-    #[Groups(["Client:write"])]
+    //#[Groups(["Gestionnaire:read","Gestionnaire:write","Client:write"])]
     #[SerializedName("password")]
     protected $plainPassword;
 

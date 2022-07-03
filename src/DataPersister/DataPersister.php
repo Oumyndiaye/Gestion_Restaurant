@@ -7,22 +7,23 @@ use Symfony\Component\HttpFoundation\Request;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
- class DataPersister implements ContextAwareDataPersisterInterface{
+ class DataPersister implements ContextAwareDataPersisterInterface
+ {
    
-     public function __construct(UserPasswordHasherInterface $encoder,EntityManagerInterface $manager,Mailer $mailer){
+     public function __construct(UserPasswordHasherInterface $encoder,EntityManagerInterface $manager,Mailer $mailer)
+     {
         $this->encoder=$encoder;
         $this->manager=$manager;
         $this->mailer=$mailer;
-    } 
+     } 
      public function supports($data,$context=[]):bool
     {
         return $data instanceof User;
     } 
-    /**
-     * @param User $data
-     */
+    
       public function persist($data,$context=[])
     {
+        
         if($data->getPlainPassword())
         {
             $password=$this->encoder->hashPassword($data,$data->getPlainPassword());

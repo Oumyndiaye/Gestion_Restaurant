@@ -2,38 +2,68 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FritteRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
-/**
- *@ORM\Entity(repositoryClass="App\Repository\UserRepository")) 
- * @ApiResource 
- * / */
- #[ApiResource ]
+use Symfony\Component\Serializer\Annotation\Groups;
+
+#[ApiResource(
+    normalizationContext: 
+    [
+        "groups" => ["Fritte:read"]
+    ],
+    denormalizationContext: 
+    [
+        "groups" => ["Fritte:write"]
+    ],
+    /* collectionOperations: [
+        'get' => ['method' => 'get'],
+        'post'
+    ],
+    itemOperations: [
+        'get' => [
+            'path' => '/frittes'            
+        ],
+    ], */
+  )
+]
 #[ORM\Entity(repositoryClass: FritteRepository::class)]
-class Fritte extends Complement
+class Fritte extends Produit
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+    #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'frittes')]
+    private $menus;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $proportion;
-
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
+        parent::__construct();
+        $this->menus = new ArrayCollection();
     }
 
-    public function getProportion(): ?string
+    /**
+     * @return Collection<int, Menu>
+     */
+    public function getMenus(): Collection
     {
-        return $this->proportion;
+        return $this->menus;
     }
 
-    public function setProportion(string $proportion): self
+    public function addMenu(Menu $menu): self
     {
-        $this->proportion = $proportion;
+        if (!$this->menus->contains($menu)) {
+            $this->menus[] = $menu;
+            $menu->addFritte($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMenu(Menu $menu): self
+    {
+        if ($this->menus->removeElement($menu)) {
+            $menu->removeFritte($this);
+        }
 
         return $this;
     }

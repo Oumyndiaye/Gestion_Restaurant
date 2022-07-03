@@ -5,7 +5,16 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LigneDeCommandeRepository;
- #[ApiResource()]
+ #[ApiResource(
+    collectionOperations:
+        [
+            "get","post",
+        ],
+    itemOperations:
+        [
+            "put"
+        ])
+]
 #[ORM\Entity(repositoryClass: LigneDeCommandeRepository::class)]
 class LigneDeCommande
 {

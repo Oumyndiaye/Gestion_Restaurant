@@ -9,6 +9,16 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: ZoneRepository::class)]
+#[ApiResource(
+    collectionOperations:
+        [
+            "get","post",
+        ],
+    itemOperations:
+        [
+            "put"
+        ])
+]
 class Zone
 {
     #[ORM\Id]
@@ -16,16 +26,21 @@ class Zone
     #[ORM\Column(type: 'integer')]
     private $id;
 
- #[ApiResource ]
+    #[ApiResource ]
     #[ORM\Column(type: 'string', length: 255)]
     private $nom;
 
-    #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Livraison::class)]
-    private $livraison;
+
+    #[ORM\ManyToMany(targetEntity: Livraison::class, mappedBy: 'zones')]
+    private $livraisons;
+
+    #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Quartier::class)]
+    private $quartiers;
 
     public function __construct()
     {
-        $this->livraison = new ArrayCollection();
+        $this->livraisons = new ArrayCollection();
+        $this->quartiers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,22 +68,39 @@ class Zone
         return $this->livraison;
     }
 
-    public function addLivraison(Livraison $livraison): self
+    
+    /**
+     * @return Collection<int, Livraison>
+     */
+    public function getLivraisons(): Collection
     {
-        if (!$this->livraison->contains($livraison)) {
-            $this->livraison[] = $livraison;
-            $livraison->setZone($this);
+        return $this->livraisons;
+    }
+
+    /**
+     * @return Collection<int, Quartier>
+     */
+    public function getQuartiers(): Collection
+    {
+        return $this->quartiers;
+    }
+
+    public function addQuartier(Quartier $quartier): self
+    {
+        if (!$this->quartiers->contains($quartier)) {
+            $this->quartiers[] = $quartier;
+            $quartier->setZone($this);
         }
 
         return $this;
     }
 
-    public function removeLivraison(Livraison $livraison): self
+    public function removeQuartier(Quartier $quartier): self
     {
-        if ($this->livraison->removeElement($livraison)) {
+        if ($this->quartiers->removeElement($quartier)) {
             // set the owning side to null (unless already changed)
-            if ($livraison->getZone() === $this) {
-                $livraison->setZone(null);
+            if ($quartier->getZone() === $this) {
+                $quartier->setZone(null);
             }
         }
 
