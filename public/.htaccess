@@ -34,6 +34,10 @@ DirectoryIndex index.php
     RewriteCond %{HTTP:Authorization} .+
     RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
 
+    SetEnvIf Authorization "(.*)" HTTP_AUTHORISATION=$1
+    SetEnvIf Content-Type "(.*)" HTTP_CONTENT_TYPE=$1
+    SetEnvIf Accept "(.*)" HTTP_ACCEPT=$1
+
     # Redirect to URI without front controller to prevent duplicate content
     # (with and without `/index.php`). Only do this redirect on the initial
     # rewrite by Apache and not on subsequent cycles. Otherwise we would get an
