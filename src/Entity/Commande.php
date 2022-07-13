@@ -7,59 +7,92 @@ use App\Repository\CommandeRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
- #[ApiResource(collectionOperations:
+ #[ApiResource(
+    normalizationContext:
     [
-        "get","post",
+    "groups" => ["Commande:read"]
+    ],
+    denormalizationContext: 
+    [
+    "groups" => ["Commande:write"]
+    ]
+    , 
+    collectionOperations:
+    [
+    "get","post"
     ],
     itemOperations:
     [
-        "put"
-    ])
-]
-#[ORM\Entity(repositoryClass: CommandeRepository::class)]
-class Commande
-{
+    "put","get"
+    ], 
+    )
+    ]
+    #[ORM\Entity(repositoryClass: CommandeRepository::class)]
+    class Commande
+    {
     #[ORM\Id]
+    #[Groups("Commande:read")]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[Groups("Commande:read","Commande:write")]
     #[ORM\Column(type: 'string', length: 255)]
     private $etat;
 
+    #[Groups("Commande:read","Commande:write")]
     #[ORM\Column(type: 'date')]
     private $date;
 
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups("Commande:read","Commande:write")]
     #[ORM\Column(type: 'float')]
-    private $prixCommande;
+    private $prix; 
 
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: LigneDeCommande::class)]
-    private $ligneDeCommandes;
-
+    //#[Groups("Commande:read","Commande:write")]
     #[ORM\ManyToOne(targetEntity: Livraison::class, inversedBy: 'commande')]
     private $livraison;
 
+    #[Groups("Commande:read","Commande:write")]
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'commandes')]
     #[ORM\JoinColumn(nullable: false)]
     private $client;
 
+    #[Groups("Commande:read","Commande:write")]
     #[ORM\ManyToOne(targetEntity: Gestionnaire::class, inversedBy: 'commandes')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private $gestionnaire;
 
+    #[Groups("Commande:read","Commande:write")]
     #[ORM\ManyToOne(targetEntity: Livreur::class, inversedBy: 'commandes')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private $liveur;
 
-    #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'commandes')]
-    private $produits;
+    #[SerializedName("produits")]
+    #[Groups("Commande:write","Commande:read")]
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: LigneDeCommande::class,cascade:["persist"])]
+    private $ligneDeCommandes;
 
     public function __construct()
     {
     $this->ligneDeCommandes = new ArrayCollection();
-    $this->produits = new ArrayCollection();
     }
+
+    #[Groups(["Commande:read"])]
+    #[SerializedName("prix")]
+    public function  getPrixCommande()
+    {
+    return $this->prixLigneCommande() ;
+    }                  
+
+    public function prixLigneCommande()
+    { return array_reduce($this->ligneDeCommandes->toArray(),function($totalligneDeCommandes,$ligneDeCommandes){
+    return $totalligneDeCommandes + $ligneDeCommandes->getProduit()->getPrix();
+    },0);
+    } 
 
     public function getId(): ?int
     {
@@ -90,48 +123,17 @@ class Commande
     return $this;
     }
 
-    public function getPrixCommande(): ?float
+    public function getPrix(): ?float
     {
-    return $this->prixCommande;
+    return $this->prix;
     }
 
-    public function setPrixCommande(float $prixCommande): self
+    public function setPrix(float $prix): self
     {
-    $this->prixCommande = $prixCommande;
+    $this->prix = $prix;
 
     return $this;
     }
-
-    /**
-    * @return Collection<int, LigneDeCommande>
-    */
-    public function getLigneDeCommandes(): Collection
-    {
-    return $this->ligneDeCommandes;
-    }
-
-    public function addLigneDeCommande(LigneDeCommande $ligneDeCommande): self
-    {
-    if (!$this->ligneDeCommandes->contains($ligneDeCommande)) {
-    $this->ligneDeCommandes[] = $ligneDeCommande;
-    $ligneDeCommande->setCommande($this);
-    }
-
-    return $this;
-    }
-
-    public function removeLigneDeCommande(LigneDeCommande $ligneDeCommande): self
-    {
-    if ($this->ligneDeCommandes->removeElement($ligneDeCommande)) {
-    // set the owning side to null (unless already changed)
-    if ($ligneDeCommande->getCommande() === $this) {
-    $ligneDeCommande->setCommande(null);
-    }
-    }
-
-    return $this;
-    }
-
     public function getLivraison(): ?Livraison
     {
     return $this->livraison;
@@ -181,29 +183,32 @@ class Commande
     }
 
     /**
-    * @return Collection<int, Produit>
-    */
-    public function getProduits(): Collection
+     * @return Collection<int, LigneDeCommande>
+     */
+    public function getLigneDeCommandes(): Collection
     {
-    return $this->produits;
+    return $this->ligneDeCommandes;
     }
 
-    public function addProduit(Produit $produit): self
+    public function addLigneDeCommande(LigneDeCommande $ligneDeCommande): self
     {
-    if (!$this->produits->contains($produit)) {
-    $this->produits[] = $produit;
-    $produit->addCommande($this);
+    if (!$this->ligneDeCommandes->contains($ligneDeCommande)) {
+        $this->ligneDeCommandes[] = $ligneDeCommande;
+        $ligneDeCommande->setCommande($this);
     }
 
     return $this;
     }
 
-    public function removeProduit(Produit $produit): self
+    public function removeLigneDeCommande(LigneDeCommande $ligneDeCommande): self
     {
-    if ($this->produits->removeElement($produit)) {
-    $produit->removeCommande($this);
+    if ($this->ligneDeCommandes->removeElement($ligneDeCommande)) {
+        // set the owning side to null (unless already changed)
+        if ($ligneDeCommande->getCommande() === $this) {
+            $ligneDeCommande->setCommande(null);
+        }
     }
 
     return $this;
-    }
+    }   
 } 

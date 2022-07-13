@@ -2,10 +2,23 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\QuartierRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: QuartierRepository::class)]
+#[ApiResource(
+    collectionOperations:
+        [
+            "get"
+            ,"post"
+        ],
+    itemOperations:
+        [
+            "put",
+            "get"
+        ])
+]
 class Quartier
 {
     #[ORM\Id]

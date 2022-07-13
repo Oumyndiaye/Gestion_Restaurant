@@ -10,15 +10,29 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    normalizationContext: 
+     normalizationContext: 
     [
         "groups" => ["Fritte:read"]
     ],
     denormalizationContext: 
     [
         "groups" => ["Fritte:write"]
-    ],
-    /* collectionOperations: [
+    ], 
+    collectionOperations:[
+        'get',
+        'post' => [
+            'input_formats' => [
+                'multipart' => ['multipart/form-data'],
+             ],    
+        ]
+        
+            ],
+            itemOperations: [
+                'get',
+                'delete'
+            ], 
+    /* ,
+     collectionOperations: [
         'get' => ['method' => 'get'],
         'post'
     ],
@@ -26,7 +40,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'get' => [
             'path' => '/frittes'            
         ],
-    ], */
+        'delete'
+    ],  */
+   
   )
 ]
 #[ORM\Entity(repositoryClass: FritteRepository::class)]
@@ -35,36 +51,44 @@ class Fritte extends Produit
     #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'frittes')]
     private $menus;
 
+    #[ORM\OneToMany(mappedBy: 'tailleFritte', targetEntity: MenuTailleFritte::class)]
+    private $menuTailleFrittes;
+
     public function __construct()
     {
         parent::__construct();
-        $this->menus = new ArrayCollection();
+        //$this->menus = new ArrayCollection();
+        $this->menuTailleFrittes = new ArrayCollection();
     }
 
     /**
-     * @return Collection<int, Menu>
+     * @return Collection<int, MenuTailleFritte>
      */
-    public function getMenus(): Collection
+    public function getMenuTailleFrittes(): Collection
     {
-        return $this->menus;
+        return $this->menuTailleFrittes;
     }
 
-    public function addMenu(Menu $menu): self
+    public function addMenuTailleFritte(MenuTailleFritte $menuTailleFritte): self
     {
-        if (!$this->menus->contains($menu)) {
-            $this->menus[] = $menu;
-            $menu->addFritte($this);
+        if (!$this->menuTailleFrittes->contains($menuTailleFritte)) {
+            $this->menuTailleFrittes[] = $menuTailleFritte;
+            $menuTailleFritte->setTailleFritte($this);
         }
 
         return $this;
     }
 
-    public function removeMenu(Menu $menu): self
+    public function removeMenuTailleFritte(MenuTailleFritte $menuTailleFritte): self
     {
-        if ($this->menus->removeElement($menu)) {
-            $menu->removeFritte($this);
+        if ($this->menuTailleFrittes->removeElement($menuTailleFritte)) {
+            // set the owning side to null (unless already changed)
+            if ($menuTailleFritte->getTailleFritte() === $this) {
+                $menuTailleFritte->setTailleFritte(null);
+            }
         }
 
         return $this;
     }
+ 
 }

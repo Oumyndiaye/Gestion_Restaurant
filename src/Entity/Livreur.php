@@ -10,27 +10,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
  #[ApiResource (
-    collectionOperations:
+     /*  normalizationContext:[
+        "groups"=>["Menu:read"]
+    ], */
+         denormalizationContext:[
+            "groups"=>["Menu:write"]
+        ], 
+     collectionOperations:
         [
-            "get","post",
+           "get",
+           "post"
         ],
-    itemOperations:
+   itemOperations:
         [
-            "put"
-        ],
-    normalizationContext:
-        [ 
-            "groups"=>["Gestionnaire:read"]
-        ],
-    denormalizationContext:
-        [
-            "groups"=>["Gestionnaire:write"]
+            "put", 
+            "get"
         ])
 ]
     #[ORM\Entity(repositoryClass: LivreurRepository::class)]
 class Livreur extends User
 {
-    #[Groups(["Gestionnaire:read","Gestionnaire:write"])]
+    #[Groups(["Livreur:read","Livreur:write"])]
     #[ORM\Column(type: 'string', length: 255)]
     private $etat;
 

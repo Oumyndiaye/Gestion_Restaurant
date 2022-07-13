@@ -23,7 +23,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
     
       public function persist($data,$context=[])
     {
-        
         if($data->getPlainPassword())
         {
             $password=$this->encoder->hashPassword($data,$data->getPlainPassword());

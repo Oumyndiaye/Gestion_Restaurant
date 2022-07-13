@@ -39,6 +39,8 @@ class FritteRepository extends ServiceEntityRepository
         }
     }
 
+    
+
 //    /**
 //     * @return Fritte[] Returns an array of Fritte objects
 //     */

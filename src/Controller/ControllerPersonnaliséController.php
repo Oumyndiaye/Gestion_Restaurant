@@ -11,11 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 class ControllerPersonnaliséController extends AbstractController
 {
     public function __invoke(Request $request,UserRepository $repo,EntityManagerInterface $manager)
     {
+        dd("hcjn");
         $token=$request->get("token");
         $user=$repo->findOneBy(["token"=>$token]);
         if(!$user){

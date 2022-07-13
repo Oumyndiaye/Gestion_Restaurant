@@ -15,13 +15,13 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 #[ApiResource(
-    collectionOperations:
+    /* collectionOperations:
         [
             "get","post",
         ],
     itemOperations:
         [
-            "put"
+            "put", "get"
         ],
         
           normalizationContext:[
@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
         ],
             denormalizationContext:[
                 "groups"=>["Client:write"]
-             ]
+             ] */
         )]
         
 class Client extends User
@@ -47,8 +47,6 @@ class Client extends User
 
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Commande::class)]
     private $commandes;
-
-    
 
     public function getNumeroTelephone(): ?string
     {

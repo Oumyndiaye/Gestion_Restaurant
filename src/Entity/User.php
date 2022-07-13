@@ -20,9 +20,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\DiscriminatorColumn(name:"type",type:"string")]
 #[ORM\DiscriminatorMap(["GESTIONNAIRE"=>Gestionnaire::class,"CLIENT"=>Client::class,"LIVREUR"=>Livreur::class])] 
 #[ApiResource(
+   
     itemOperations:
         [
-            "put"
+            "put","get"
         ],
     collectionOperations:
         [
@@ -44,27 +45,22 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     protected $email;
 
    
     #[ORM\Column(type: 'json')]
     protected $roles = [];
 
-    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     #[ORM\Column(type: 'string', length: 255)]
     protected $password;
     
     #[ORM\Column(type: 'string',length: 255)]
-    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     protected $nom;
 
     
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(["Gestionnaire:read","Gestionnaire:write","Client:read","Client:write"])]
     protected $prenom;
 
-    //#[Groups(["Gestionnaire:read","Gestionnaire:write","Client:write"])]
     #[SerializedName("password")]
     protected $plainPassword;
 

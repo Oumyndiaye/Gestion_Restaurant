@@ -10,96 +10,75 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Vich\UploaderBundle\Mapping\Annotation\Uploadable;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 
 #[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name: "type", type: "string")]
 #[ORM\DiscriminatorMap(["menu" =>"Menu" , "burger" => "Burger","complement" => "Complement","fritte" => "Fritte","boisson" => "Boisson"])]
+#[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[ApiResource(
      collectionOperations:
         [
-            "get","post",
+            "get",
+            'post' => [
+                'input_formats' => [
+                    'multipart' => ['multipart/form-data'],
+                ],    
+            ]
         ],
     itemOperations:
         [
-            "put"
+            "put","get"
         ], 
     normalizationContext:
         [
             "groups" => ["Produit:read"]
         ],
-    denormalizationContext: 
+        
+   /*   denormalizationContext: 
         [
             "groups" => ["Produit:write"]
-        ])
+        ]  */)
 ]
-
-#[ORM\Entity(repositoryClass: ProduitRepository::class)]
-/**
- * @ORM\Entity
- * @Uploadable
- */
 class Produit
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("Menu:read")]
     protected $id;
 
-
-    #[Groups(["Produit:read", "Produit:write","Menu:write","Menu:read","Burger:read","Burger:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
+    #[Groups(["Produit:read", "Produit:write","Menu:read","Menu:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
     #[ORM\Column(type: 'string', length: 255)]
+     protected $nom;
     
-    protected $nom;
-
-    #[Groups(["Produit:read", "Produit:write", "Menu:read","Burger:read","Burger:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
-    #[ORM\Column(type: 'object')]
+    #[ORM\Column(type: 'blob',nullable:false)]
+    #[Groups(["Produit:read","Fritte:read","Fritte:write","Menu:read","Menu:write","Boisson:read","Boisson:write"])]
     protected $image;
 
-   /*  #[SerializedName("image")]
-    protected $photo; */
+    #[SerializedName("image")]
+    protected $photo; 
 
-    #[Groups(["Produit:read", "Produit:write","Menu:write","Menu:read","Burger:read","Burger:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
+    #[Groups(["Produit:read", "Produit:write","Fritte:read","Fritte:write","Menu:read","Menu:write","Boisson:read","Boisson:write"])]
     #[ORM\Column(type: 'string', length: 255)]
     protected $etat;
 
-    #[ORM\Column(type: 'float')]
-    #[Groups(["Produit:read", "Produit:write","Menu:write","Menu:read","Burger:read","Burger:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
+    #[ORM\Column(type: 'float',nullable:true)]
+    #[Groups(["Produit:read", "Produit:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
     protected $prix;
-  
-
-    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: LigneDeCommande::class)]
-    protected $ligneDeCommandes;
 
     #[Groups([ "Produit:write", "Boisson:write","Menu:write","Burger:write","Fritte:write"])]
     #[ORM\ManyToOne(targetEntity: Gestionnaire::class, inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
     protected $Gestionnaire;
 
-    #[ORM\ManyToMany(targetEntity: Commande::class, inversedBy: 'produits')]
-    private $commandes;
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: LigneDeCommande::class)]
+    private $ligneDeCommandes;
 
-    /**
-     * @UploadableField(mapping="produits_images", fileNameProperty="image")
-     * @var File
-     */
-    private $imageFile;
 
-      /**
-     * @ORM\Column(type="datetime")
-     * @var \DateTime
-     */
-    private $updatedAt;
-
-    public function __construct()
+     public function __construct()
     {
-        $this->ligneDeCommandes = new ArrayCollection();
-        $this->commandes = new ArrayCollection();
-        $this->updatedAt=new \DateTime();
-    }
+       
+    } 
 
     public function getId(): ?int
     {
@@ -117,19 +96,7 @@ class Produit
 
         return $this;
     }
-
-    public function getImage(): ?object
-    {
-        return $this->image;
-    }
-
-    public function setImage(object $image): self
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
+ 
     public function getEtat(): ?string
     {
         return $this->etat;
@@ -142,17 +109,6 @@ class Produit
         return $this;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
 
      public function getPrix(): ?float
     {
@@ -165,6 +121,55 @@ class Produit
 
         return $this;
     } 
+
+    public function getGestionnaire(): ?Gestionnaire
+    {
+        return $this->Gestionnaire;
+    }
+
+    public function setGestionnaire(?Gestionnaire $Gestionnaire): self
+    {
+        $this->Gestionnaire = $Gestionnaire;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of photo
+     */ 
+    public function getPhoto()
+    {
+        
+        return $this->photo;
+    }
+
+    /**
+     * Set the value of photo
+     *
+     * @return  self
+     */ 
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getImage():?string
+    {
+        //return $this->image;
+
+        //return(string) $this->image;
+    
+        return (is_resource($this->image) ? base64_encode( stream_get_contents($this->image)) : $this->image);
+    }
+
+    public function setImage($image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
 
     /**
      * @return Collection<int, LigneDeCommande>
@@ -192,75 +197,6 @@ class Produit
                 $ligneDeCommande->setProduit(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getGestionnaire(): ?Gestionnaire
-    {
-        return $this->Gestionnaire;
-    }
-
-    public function setGestionnaire(?Gestionnaire $Gestionnaire): self
-    {
-        $this->Gestionnaire = $Gestionnaire;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Commande>
-     */
-    public function getCommandes(): Collection
-    {
-        return $this->commandes;
-    }
-
-    public function addCommande(Commande $commande): self
-    {
-        if (!$this->commandes->contains($commande)) {
-            $this->commandes[] = $commande;
-        }
-
-        return $this;
-    }
-
-    public function removeCommande(Commande $commande): self
-    {
-        $this->commandes->removeElement($commande);
-
-        return $this;
-    }
-
-    
-   
-
-   
-
-    /**
-     * Get the value of imageFile
-     *
-     * @return  File
-     */ 
-    public function getImageFile()
-    {
-        return $this->imageFile;
-    }
-
-    /**
-     * Set the value of imageFile
-     *
-     * @param  File  $imageFile
-     *
-     * @return  self
-     */ 
-    public function setImageFile(File $imageFile=null)
-    {
-        $this->imageFile = $imageFile;
-      /*   if ($imageFile) {
-            // if 'updatedAt' is not defined in your entity, use another property
-            $this->updatedAt = new \DateTime('now');
-        } */
 
         return $this;
     }

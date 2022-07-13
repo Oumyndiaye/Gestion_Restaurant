@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
         ],
     itemOperations:
         [
-            "put"
+            "put","get"
         ])
 ]
 class Zone
@@ -31,16 +31,16 @@ class Zone
     private $nom;
 
 
-    #[ORM\ManyToMany(targetEntity: Livraison::class, mappedBy: 'zones')]
-    private $livraisons;
-
     #[ORM\OneToMany(mappedBy: 'zone', targetEntity: Quartier::class)]
     private $quartiers;
 
+    #[ORM\Column(type: 'float')]
+    private $prix;
+
     public function __construct()
     {
-        $this->livraisons = new ArrayCollection();
         $this->quartiers = new ArrayCollection();
+        $this->livraisons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -58,23 +58,6 @@ class Zone
         $this->nom = $nom;
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Livraison>
-     */
-    public function getLivraison(): Collection
-    {
-        return $this->livraison;
-    }
-
-    
-    /**
-     * @return Collection<int, Livraison>
-     */
-    public function getLivraisons(): Collection
-    {
-        return $this->livraisons;
     }
 
     /**
@@ -103,6 +86,37 @@ class Zone
                 $quartier->setZone(null);
             }
         }
+
+        return $this;
+    }
+
+   
+
+    public function addLivraison(Livraison $livraison): self
+    {
+        if (!$this->livraisons->contains($livraison)) {
+            $this->livraisons[] = $livraison;
+        }
+
+        return $this;
+    }
+
+    public function removeLivraison(Livraison $livraison): self
+    {
+        if ($this->livraisons->removeElement($livraison)) {
+        }
+
+        return $this;
+    }
+
+    public function getPrix(): ?float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(float $prix): self
+    {
+        $this->prix = $prix;
 
         return $this;
     }

@@ -1,0 +1,112 @@
+error:API PLATFORM "Unable to generate an IRI for an entity"
+resolve:#[ApiResource(
+    collectionOperations: [
+        'get' => ['method' => 'get'],
+    ],
+    itemOperations: [
+        'get' => [
+            'path' => '/api/titols'            
+        ],
+    ],
+)]
+
+
+error:"The content-type \"application/json\" is not supported. Supported MIME types are \"application/merge-patch+json\"
+resolve:“application/merge-patch+json” as an option in HTTP Headers"
+
+
+error:"Cannot validate values of type "NULL" automatically #2731"
+resolve:I had the same problem, and solved it by disabling the validation with validate=false in the custom operation in the entity.
+
+exemple: *        "my_custom_operation"={
+ *              "input"=MyCustomInput::class,
+ *              "method"="POST",
+ *              "path"="/an_entity/something",
+ *              "controller"=MyCustomAction::class,
+ *         "validate"=false,
+ *              "normalization_context"={
+ *                  "groups"={
+ *                      "groupA:read",
+ *                  }
+ *              },
+ *              "denormalization_context"={
+ *                  "groups"={
+ *                      "groupB:update",
+ *                  }
+ *              },
+ *              "validation_groups"={
+ *                  "Default",
+ *                  "groupB:update",
+ *              }
+ *          },
+
+
+ commande database:https://symfony.com/doc/3.3/doctrine.html
+
+
+ error:how to set "cascade: persist" using yaml
+ resolve:oneToMany:
+        products:
+      targetEntity: Name
+      mappedBy: product
+      cascade: ["persist"]
+
+ documentation:cascade_persist:https://stackoverflow.com/questions/24612664/understanding-doctrine-cascade-operations
+
+
+ ControllerPersonnalisé:Symfony api platform use controller
+        @ApiResource(
+
+ *     collectionOperations={
+            "get"={"method"="GET"},
+            "get_publication_order"={
+               "path"="/publication_orders/all",
+               "method"="GET",
+               "controller"=UnedicPublicationOrderController::class     
+             }
+   },
+ *     itemOperations={
+ *           "get"={"method"="GET", "path"="/publication/{cible}"},
+ *     }
+ * )
+ * @ORM\Table(name="foo")
+ * @ORM\Entity
+
+
+error upload file=>fix postman error: Couldn't upload file(postman enligne:Agent)
+    https: //www.youtube.com/watch?v=cE8bUBalPxk&t=4s
+documentation: https://api-platform.com/docs/core/file-upload/
+
+
+    documentation:multipart-content-type
+        link:https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html
+
+
+
+   error:An unexpected value could not be normalized: stream resource
+    c'est due à l'image uploader qui doit etre recuperer de la base de donnees
+        /**
+     * @var binary|null
+     *
+     * @ORM\Column(name="image", type="binary", nullable=true, options={"comment"="Agent cookie ID (Cross-site tracking)"})
+     */
+    private $image;
+    
+    -on peut modifier le type binary  à boolean
+    -Maps and converts binary string data with a maximum length. If you know that the data to be stored always fits into the specified length, you should consider using this type. Values retrieved from the database are always converted to PHP's resource type or null if no data is present.
+
+In my case, I changed type="binary" to type="boolean" and it worked.
+
+For your case, you might consider to use the GUID data type or to cast in your getter like this:
+
+public function getImage()
+{
+    return (string) $this->image;
+}
+
+The getter needs an update:
+
+public function getUid(): ?string
+{
+    return is_resource($this->uid) ? stream_get_contents($this->uid) : $this->uid;
+}

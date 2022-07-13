@@ -1,21 +1,11 @@
 <?php
-
 namespace App\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LigneDeCommandeRepository;
- #[ApiResource(
-    collectionOperations:
-        [
-            "get","post",
-        ],
-    itemOperations:
-        [
-            "put"
-        ])
-]
+use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: LigneDeCommandeRepository::class)]
+
 class LigneDeCommande
 {
     #[ORM\Id]
@@ -23,19 +13,23 @@ class LigneDeCommande
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[Groups(["Commande:write","Commande:read","Menu:write","Menu:read"])]
     #[ORM\Column(type: 'float')]
     private $quantite;
 
+    #[ORM\JoinColumn(nullable: true)]
     #[ORM\Column(type: 'float')]
-    private $prixDeVente;
+    private $prix;
+
+    #[Groups(["Commande:write","Commande:read"])]
+    #[ORM\ManyToOne(targetEntity: Produit::class, inversedBy: 'ligneDeCommandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $produit;
 
     #[ORM\ManyToOne(targetEntity: Commande::class, inversedBy: 'ligneDeCommandes')]
     #[ORM\JoinColumn(nullable: false)]
     private $commande;
 
-    #[ORM\ManyToOne(targetEntity: Produit::class, inversedBy: 'ligneDeCommandes')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $produit;
 
     public function getId(): ?int
     {
@@ -54,14 +48,26 @@ class LigneDeCommande
         return $this;
     }
 
-    public function getPrixDeVente(): ?float
+    public function getPrix(): ?float
     {
-        return $this->prixDeVente;
+        return $this->prix;
     }
 
-    public function setPrixDeVente(float $prixDeVente): self
+    public function setPrix(float $prix): self
     {
-        $this->prixDeVente = $prixDeVente;
+        $this->prixDeVente = $prix;
+
+        return $this;
+    }
+
+    public function getProduit(): ?Produit
+    {
+        return $this->produit;
+    }
+
+    public function setProduit(?Produit $produit): self
+    {
+        $this->produit = $produit;
 
         return $this;
     }
@@ -78,15 +84,8 @@ class LigneDeCommande
         return $this;
     }
 
-    public function getProduit(): ?Produit
-    {
-        return $this->produit;
-    }
+    
 
-    public function setProduit(?Produit $produit): self
-    {
-        $this->produit = $produit;
+   
 
-        return $this;
-    }
 }

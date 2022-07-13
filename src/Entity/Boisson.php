@@ -35,8 +35,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
                {
                
                
-                   #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'boissons')]
-                   private $menus;
+                  /*  #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'boissons')]
+                   private $menus; */
             
                    #[ORM\ManyToMany(targetEntity: TailleBoisson::class, mappedBy: 'boissons')]
                    private $tailleBoissons;
@@ -56,24 +56,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                            return $this->menus;
                        }
                
-                       public function addMenu(Menu $menu): self
-                       {
-                           if (!$this->menus->contains($menu)) {
-                               $this->menus[] = $menu;
-                               $menu->addBoisson($this);
-                           }
-               
-                           return $this;
-                       }
-               
-                       public function removeMenu(Menu $menu): self
-                       {
-                           if ($this->menus->removeElement($menu)) {
-                               $menu->removeBoisson($this);
-                           }
-               
-                           return $this;
-                       }
       
                        /**
                         * @return Collection<int, TailleBoisson>
