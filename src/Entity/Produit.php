@@ -21,44 +21,43 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         [
             "get",
             'post' => [
-                'input_formats' => [
+                /* 'input_formats' => [
                     'multipart' => ['multipart/form-data'],
-                ],    
+                ], */    
             ]
         ],
     itemOperations:
         [
             "put","get"
         ], 
-    normalizationContext:
+  /*   normalizationContext:
         [
             "groups" => ["Produit:read"]
         ],
         
-   /*   denormalizationContext: 
+      denormalizationContext: 
         [
             "groups" => ["Produit:write"]
-        ]  */)
+        ]  */ )
 ]
 class Produit
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
+    #[Groups(["Fritte:read","Fritte:write","Menu:read","Menu:write","Boisson:read","Boisson:write"])]
     #[ORM\Column(type: 'integer')]
     protected $id;
 
-    #[Groups(["Produit:read", "Produit:write","Menu:read","Menu:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
+    #[Groups(["Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
     #[ORM\Column(type: 'string', length: 255)]
      protected $nom;
     
     #[ORM\Column(type: 'blob',nullable:false)]
-    #[Groups(["Produit:read","Fritte:read","Fritte:write","Menu:read","Menu:write","Boisson:read","Boisson:write"])]
     protected $image;
 
     #[SerializedName("image")]
     protected $photo; 
 
-    #[Groups(["Produit:read", "Produit:write","Fritte:read","Fritte:write","Menu:read","Menu:write","Boisson:read","Boisson:write"])]
     #[ORM\Column(type: 'string', length: 255)]
     protected $etat;
 
@@ -66,13 +65,13 @@ class Produit
     #[Groups(["Produit:read", "Produit:write","Fritte:read","Fritte:write","Boisson:read","Boisson:write"])]
     protected $prix;
 
-    #[Groups([ "Produit:write", "Boisson:write","Menu:write","Burger:write","Fritte:write"])]
+    #[Groups([ "Produit:write", "Boisson:write","Burger:write"])]
     #[ORM\ManyToOne(targetEntity: Gestionnaire::class, inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
     protected $Gestionnaire;
 
-    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: LigneDeCommande::class)]
-    private $ligneDeCommandes;
+     #[ORM\OneToMany(mappedBy: 'produit', targetEntity: LigneDeCommande::class)]
+     private $ligneDeCommandes; 
 
 
      public function __construct()

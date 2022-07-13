@@ -19,14 +19,14 @@ itemOperations:
 [
     "put","get"
 ], 
-normalizationContext:
+/* normalizationContext:
 [
     "groups" => ["TailleBoisson:read"]
 ],
 denormalizationContext: 
 [
     "groups" => ["TailleBoisson:write"]
-])]
+] */)]
 class TailleBoisson 
 {
     #[ORM\Id]

@@ -53,7 +53,7 @@ class MenuController extends AbstractController
                         $menu->addBoisson($boisson,$b->quantite);
                     
             }
-            dd($menu);
+           // dd($menu);
                 $menu->setNom("rawane");
                 $menu->setImage('menu');
                 $menu->setEtat("disponible");

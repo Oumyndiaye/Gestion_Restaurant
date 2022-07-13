@@ -10,14 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    normalizationContext:
+    /* normalizationContext:
     [
         "groups"=>["MenuBurger:read"]
     ],
     denormalizationContext:
     [
         "groups"=>["MenuBurger:write"]
-    ]
+    ] */
 )]
 
 #[ORM\Entity(repositoryClass: MenuBurgerRepository::class)]
@@ -28,7 +28,7 @@ class MenuBurger
     #[ORM\Column(type: 'integer')]
     private $id;
 
-     #[Groups(["MenuBurger:read","MenuBurger:write","Menu:write","Menu:read"])]
+     #[Groups(["Menu:write","Menu:read"])]
     #[ORM\Column(type: 'integer')]
     private $quantite;
 
@@ -36,7 +36,7 @@ class MenuBurger
     #[ORM\JoinColumn(nullable: false)]
     private $menu;
 
-    #[Groups(["MenuBurger:read","MenuBurger:write","Menu:write","Menu:read"])]
+    #[Groups(["Menu:write","Menu:read"])]
     #[ORM\ManyToOne(targetEntity: Burger::class, inversedBy: 'menuBurgers')]
     #[ORM\JoinColumn(nullable: false)]
     private $burgers;

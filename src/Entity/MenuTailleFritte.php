@@ -8,12 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MenuTailleFritteRepository::class)]
-#[ApiResource(normalizationContext:[
+/* #[ApiResource(normalizationContext:[
     "groups"=>["Menu:read"]
 ],
     denormalizationContext:[
         "groups"=>["Menu:write"]
-    ],)]
+    ],)] */
 class MenuTailleFritte
 {
     #[ORM\Id]
@@ -21,7 +21,7 @@ class MenuTailleFritte
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[Groups("Menu:read","Menu:write")]
+    #[Groups(["Menu:write","Menu:read"])]
     #[ORM\Column(type: 'float')]
     private $quantite;
 
@@ -29,7 +29,7 @@ class MenuTailleFritte
     #[ORM\JoinColumn(nullable: false)]
     private $menu;
 
-    #[Groups("Menu:read","Menu:write")]
+    #[Groups(["Menu:write","Menu:read"])]
     #[ORM\ManyToOne(targetEntity: Fritte::class, inversedBy: 'menuTailleFrittes')]
     private $tailleFritte;
 

@@ -21,12 +21,12 @@ class DataPersisterMm implements ContextAwareDataPersisterInterface
     public function supports($data, array $context = []): bool
     {
         
-        return $data instanceof Produit || $data instanceof Fritte || $data instanceof Menu;
+        return $data instanceof Produit;
     }
 
     public function persist($data, array $context = [])
     {
-       
+       //dd($data);
       $photo=$data->getPhoto()->getRealPath();
        $photo= stream_get_contents(fopen($photo,"rb"));
       $data->setImage($photo);

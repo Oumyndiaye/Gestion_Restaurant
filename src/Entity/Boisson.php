@@ -19,14 +19,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
                            'path' => '/boissons'            
                        ],
                    ],
-                               normalizationContext:
+                               /* normalizationContext:
                                    [
                                        "groups"=>["Boisson:read"]
                                    ],
                                denormalizationContext:
                                    [
                                        "groups"=>["Boisson:write"]
-                                   ],
+                                   ], */
                                    )
                
                ]

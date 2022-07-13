@@ -8,6 +8,8 @@ use App\Repository\BurgerRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ApiResource (
     collectionOperations:[
         'get',
@@ -16,32 +18,27 @@ use Doctrine\Common\Collections\ArrayCollection;
                 'multipart' => ['multipart/form-data'],
              ],    
         ]
-    ]
-    
-   /*  collectionOperations: [
-        'get' => [
-            'method' => 'get'
-        ],
-        "post"
     ],
     itemOperations: [
         'get' => [
             'path' => '/burgers'            
         ],
     ], 
-    normalizationContext:
+    /* normalizationContext:
         [
             "groups"=>["Burger:read"]
         ],
     denormalizationContext:
         [
             "groups"=>["Burger:write"]
-        ]*/
+        ] */
         )
 ]
 #[ORM\Entity(repositoryClass: BurgerRepository::class)]
 class Burger extends Produit
 {
+    #[Groups('Menu:write')]
+    protected $id;
    
     #[ORM\OneToMany(mappedBy: 'burgers', targetEntity: MenuBurger::class)]
     private $menuBurgers;

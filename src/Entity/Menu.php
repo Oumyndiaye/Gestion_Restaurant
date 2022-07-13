@@ -12,26 +12,29 @@ use phpDocumentor\Reflection\Types\Nullable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 #[ApiResource (  
-/*   normalizationContext:[
+   normalizationContext:[
         "groups"=>["Menu:read"]
-    ],
-        denormalizationContext:[
-            "groups"=>["Menu:write"]
-        ], */   
+   ],
+  /*  denormalizationContext:[
+    "groups"=>["Menu:write"]
+], */
 collectionOperations: [
-    'get'=>["method"=>"get"],
-        'post' => [
-        'input_formats' => [
-            'multipart' => ['multipart/form-data'],
-        ],    
-    ], 
+   'get'=>["method"=>"get"],
+    'post' => [
+        "path"=>"/menus",
+            'method'=>'post',
+             /* 'denormalization_context'=>[ 'groups'=> ['Menu:write'] ], */
+        // 'input_formats' => [
+        //     'multipart' => ['multipart/form-data'],
+           
+    ]/* , 
     "addMenu"=>[
         "method"=>"post",
         "path"=>"/menu2",
         "controller"=>MenuController::class,
         "validate"=>false,
         "deserialize"=>false
-    ]   
+    ]    */
 ],
     itemOperations: 
     ['delete','get' ] 
@@ -51,6 +54,12 @@ class Menu extends Produit
         $this->menuTailleFrittes = new ArrayCollection();
     }
 
+    #[Groups(['Menu:write','Menu:read'])]
+    protected $nom;
+
+    #[Groups(['Menu:write','Menu:read'])]
+    protected $image;
+
     #[Groups(["Menu:read","Menu:write"])] 
     #[SerializedName("burgers")]
     #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuBurger::class,cascade:['persist'])]
@@ -58,16 +67,17 @@ class Menu extends Produit
 
     #[SerializedName("boissons")]
     #[Groups(["Menu:read","Menu:write"])]
-    #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuTailleBoisson::class,cascade:['persist'])]
+    #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuTailleBoisson::class)]
     private $menuTailleBoissons;
 
     #[SerializedName("frittes")]
     #[Groups(["Menu:read","Menu:write"])]
-    #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuTailleFritte::class,cascade:['persist'])]
+    #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuTailleFritte::class)]
     private $menuTailleFrittes;
 
+    
 
-    public function prixBoisson()
+   /* public function prixBoisson()
     {
         return array_reduce($this->tailleBoissons->toArray(),function($totalTailleBoisson,$tailleBoissons){
         return $totalTailleBoisson + $tailleBoissons->getPrix();
@@ -77,7 +87,7 @@ class Menu extends Produit
 
     public function prixFritte()
     {
-        //dd($this->frittes);
+        dd($this->frittes);
         return array_reduce($this->frittes->toArray(),function($totalFritte,$frittes){
         return $totalFritte + $frittes->getPrix();
         },0);
@@ -85,13 +95,13 @@ class Menu extends Produit
 
      
 
-     #[Groups(["Menu:write"])]
+      #[Groups(["Menu:write"])]
     #[SerializedName("prix")]
     #[ORM\JoinColumn(nullable: true)]
     public function getPrixMenu()
     {
         return   $this->prixFritte() + $this->prixBoisson();
-    } 
+    }  */
     
     /**
         * @return Collection<int, MenuBurger>

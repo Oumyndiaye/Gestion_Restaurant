@@ -91,4 +91,24 @@ class Fritte extends Produit
         return $this;
     }
  
+
+    /**
+     * Get the value of menus
+     */ 
+    public function getMenus()
+    {
+        return $this->menus;
+    }
+
+    /**
+     * Set the value of menus
+     *
+     * @return  self
+     */ 
+    public function setMenus($menus)
+    {
+        $this->menus = $menus;
+
+        return $this;
+    }
 }

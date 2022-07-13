@@ -22,15 +22,14 @@ class MenuTailleBoisson
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[Groups("Menu:read","Menu:write")]
+    #[Groups(["Menu:read","Menu:write"])]
     #[ORM\Column(type: 'float')]
     private $quantite;
 
-    #[Groups("Menu:read","Menu:write")]
     #[ORM\ManyToOne(targetEntity: Menu::class, inversedBy: 'menuTailleBoissons')]
     private $menu;
 
-    #[Groups("Menu:read","Menu:write")]
+    #[Groups(["Menu:read","Menu:write"])]
    // #[SerializedName("produits")]
     #[ORM\ManyToOne(targetEntity: TailleBoisson::class, inversedBy: 'menuTailleBoissons')]
     private $tailleBoisson;
