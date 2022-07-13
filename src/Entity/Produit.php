@@ -52,7 +52,7 @@ class Produit
     #[ORM\Column(type: 'string', length: 255)]
      protected $nom;
     
-    #[ORM\Column(type: 'blob',nullable:false)]
+    #[ORM\Column(type: 'blob',nullable:true)]
     protected $image;
 
     #[SerializedName("image")]
@@ -156,11 +156,11 @@ class Produit
 
     public function getImage():?string
     {
-        //return $this->image;
+        return $this->image;
 
         //return(string) $this->image;
     
-        return (is_resource($this->image) ? base64_encode( stream_get_contents($this->image)) : $this->image);
+        //return (is_resource($this->image) ? base64_encode( stream_get_contents($this->image)) : $this->image);
     }
 
     public function setImage($image): self

@@ -19,20 +19,20 @@ itemOperations:
 [
     "put","get"
 ], 
-/* normalizationContext:
+normalizationContext:
 [
     "groups" => ["TailleBoisson:read"]
 ],
 denormalizationContext: 
 [
     "groups" => ["TailleBoisson:write"]
-] */)]
+])]
 class TailleBoisson 
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("TailleBoisson:write","TailleBoisson:read")]
+    #[Groups(["TailleBoisson:write","TailleBoisson:read", "Menu:write"])]
     private $id;
 
     

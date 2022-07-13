@@ -51,64 +51,10 @@ class Fritte extends Produit
     #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'frittes')]
     private $menus;
 
-    #[ORM\OneToMany(mappedBy: 'tailleFritte', targetEntity: MenuTailleFritte::class)]
-    private $menuTailleFrittes;
-
     public function __construct()
     {
         parent::__construct();
         //$this->menus = new ArrayCollection();
-        $this->menuTailleFrittes = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection<int, MenuTailleFritte>
-     */
-    public function getMenuTailleFrittes(): Collection
-    {
-        return $this->menuTailleFrittes;
-    }
-
-    public function addMenuTailleFritte(MenuTailleFritte $menuTailleFritte): self
-    {
-        if (!$this->menuTailleFrittes->contains($menuTailleFritte)) {
-            $this->menuTailleFrittes[] = $menuTailleFritte;
-            $menuTailleFritte->setTailleFritte($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMenuTailleFritte(MenuTailleFritte $menuTailleFritte): self
-    {
-        if ($this->menuTailleFrittes->removeElement($menuTailleFritte)) {
-            // set the owning side to null (unless already changed)
-            if ($menuTailleFritte->getTailleFritte() === $this) {
-                $menuTailleFritte->setTailleFritte(null);
-            }
-        }
-
-        return $this;
     }
  
-
-    /**
-     * Get the value of menus
-     */ 
-    public function getMenus()
-    {
-        return $this->menus;
-    }
-
-    /**
-     * Set the value of menus
-     *
-     * @return  self
-     */ 
-    public function setMenus($menus)
-    {
-        $this->menus = $menus;
-
-        return $this;
-    }
 }

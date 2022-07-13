@@ -28,7 +28,7 @@ class DataPersisterMm implements ContextAwareDataPersisterInterface
     {
        //dd($data);
       $photo=$data->getPhoto()->getRealPath();
-       $photo= stream_get_contents(fopen($photo,"rb"));
+    $photo= stream_get_contents(fopen($photo,"rb"));
       $data->setImage($photo);
             $this->manager->persist($data);
             $this->manager->flush();

@@ -28,9 +28,9 @@ class DataPersisterMenu implements ContextAwareDataPersisterInterface
     {
         dd($data);
         $data->setPrix($data-> getPrixMenu()); 
-        $photo=$data->getPhoto()->getRealPath();
-        $photo= stream_get_contents(fopen($photo,"rb"));
-        $data->setImage($photo);
+        //$photo=$data->getPhoto()->getRealPath();
+       // $photo= stream_get_contents(fopen($photo,"rb"));
+        //$data->setImage($photo);
         $this->manager->persist($data);
         $this->manager->flush();
     }

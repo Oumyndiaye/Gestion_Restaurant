@@ -10,14 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    /* normalizationContext:
+    normalizationContext:
     [
         "groups"=>["MenuBurger:read"]
     ],
     denormalizationContext:
     [
         "groups"=>["MenuBurger:write"]
-    ] */
+    ]
 )]
 
 #[ORM\Entity(repositoryClass: MenuBurgerRepository::class)]

@@ -24,14 +24,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'path' => '/burgers'            
         ],
     ], 
-    /* normalizationContext:
+    normalizationContext:
         [
             "groups"=>["Burger:read"]
         ],
     denormalizationContext:
         [
             "groups"=>["Burger:write"]
-        ] */
+        ]
         )
 ]
 #[ORM\Entity(repositoryClass: BurgerRepository::class)]

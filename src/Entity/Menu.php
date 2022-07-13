@@ -15,15 +15,15 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
    normalizationContext:[
         "groups"=>["Menu:read"]
    ],
-  /*  denormalizationContext:[
+   denormalizationContext:[
     "groups"=>["Menu:write"]
-], */
+],
 collectionOperations: [
    'get'=>["method"=>"get"],
     'post' => [
         "path"=>"/menus",
             'method'=>'post',
-             /* 'denormalization_context'=>[ 'groups'=> ['Menu:write'] ], */
+             'denormalization_context'=>[ 'groups'=> ['Menu:write'] ],
         // 'input_formats' => [
         //     'multipart' => ['multipart/form-data'],
            
